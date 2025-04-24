@@ -1,5 +1,4 @@
 Структура скрипта:
-C:\Users\HolliganS\Desktop\project
 _______________
 
 project_folder
@@ -707,6 +706,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
     exit;
 }
 ?>
-
---------------------
- Давайте сделаем акцент только на доработке функционала для Одноклассников,
