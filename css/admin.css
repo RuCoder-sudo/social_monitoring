@@ -1,0 +1,141 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e5ebf1;
+    color: #2c2d30;
+    margin: 0;
+    padding: 20px;
+}
+#okFields {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+}
+
+#okFields label {
+    color: #495057;
+    font-weight: 500;
+}
+
+#okFields input {
+    background: #fff;
+    border: 1px solid #ced4da;
+}
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+}
+
+.tab-buttons {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab-buttons button {
+    background-color: #2688eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 10px;
+    transition: background-color 0.4s ease;
+}
+
+.tab-buttons button.active {
+    background-color: #3b5a7e;
+}
+
+.tab-buttons button:hover {
+    background-color: #3b5a7e;
+}
+
+form {
+    background-color: #ffffff;
+    border: 1px solid #d3d9de;
+    border-radius: 8px;
+    padding: 20px;
+    width: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+input[type="text"],
+select {
+    width: 60%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #c1c7cd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border: 1px solid #2688eb;
+    box-shadow: 0 0 4px rgba(38, 136, 235, 0.4);
+}
+
+button {
+    background-color: #2688eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.4s ease;
+}
+
+button:hover {
+    background-color: #3b5a7e;
+}
+
+#results {
+    list-style-type: none;
+    padding: 0;
+}
+
+#results li {
+    background-color: #ffffff;
+    border: 1px solid #d3d9de;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#loadingIndicator {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#logs {
+    list-style-type: none;
+    padding: 0;
+}
+
+#logs li {
+    background-color: #ffffff;
+    border: 1px solid #d3d9de;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск сообщений по ключу в соицальных сетях</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/script.js"></script>
+</head>
+<body>
+    <div class="tab-buttons">
+        <button id="tabButton1" onclick="showTab(1)">Настройки</button>
+        <button id="tabButton2" onclick="showTab(2)">Лента сообщений</button>
+        <button id="tabButton3" onclick="showTab(3)">Логи</button>
+        <button id="tabButton4" onclick="showTab(4)">Дополнительно</button>
+    </div>
+
+    <div id="tab1" class="tab">
+        <h2>Поиск по - "ключевым словам"</h2>
+        <form method="post" action="php/search.php" id="settingsForm">
+            <input type="text" id="token" name="token" required placeholder="Введите свой сервисный ключ доступа"><br>
+            <div id="okFields" style="display:none;">
+                <label for="ok_token">Токен Одноклассников:</label>
+                <input type="text" id="ok_token" name="ok_token" placeholder="Введите токен приложения"><br>
+                <label for="ok_public_key">Публичный ключ:</label>
+                <input type="text" id="ok_public_key" name="ok_public_key" placeholder="Введите публичный ключ"><br>
+                <label for="ok_secret_key">Секретный ключ:</label>
+                <input type="text" id="ok_secret_key" name="ok_secret_key" placeholder="Введите секретный ключ"><br>
+            </div>
+            <label for="social_network">Социальная сеть:</label>
+            <select id="social_network" name="social_network" required>
+                <option value="vk">ВКонтакте</option>
+                <option value="telegram">Телеграм</option>
+                <option value="ok">Однакласники</option>
+                <option value="Instagram">Инстаграмм</option>
+                <option value="Facebook">Facebook</option>
+            </select><br>
+            <label for="group_ids">ID групп (через запятую):</label>
+            <input type="text" id="group_ids" name="group_ids" placeholder="Введите цифровой - ID"><br>
+            
+            <!-- Новый элемент для выбора цвета выделения ключевых слов -->
+            <label for="highlightColor">Цвет выделения ключевых слов:</label>
+            <input type="color" id="highlightColor" name="highlightColor" value="#FFFF00"><br>
+			<label for="time_start">Время начала:</label>
+<input type="datetime-local" id="time_start" name="time_start" required><br>
+<label for="time_end">Время окончания:</label>
+<input type="datetime-local" id="time_end" name="time_end" required><br>
+        </form>
+    </div>
+
+    <div id="tab2" class="tab">
+        <form method="post" id="searchForm">
+            <label for="keywords">Ключевые слова (через запятую):</label>
+            <input type="text" id="keywords" name="keywords" required placeholder="Например: сбербанк, сбер..."><br>
+            <button type="submit">Поиск</button>
+            <button type="button" onclick="stopSearch()">Остановить поиск</button>
+            <button type="button" id="resetButton">Сбросить параметры</button>
+            <button type="button" id="saveButton">Сохранить результаты</button>
+        </form>
+        <div id="resultsCount">Найдено сообщений: 0</div>
+        <div id="loadingIndicator">Поиск идет...</div>
+        <ul id="results"></ul>
+    </div>
+
+    <div id="tab3" class="tab">
+        <ul id="logs"></ul>
+        <button id="clearLogs">Очистить логи</button>
+    </div>
+
+    <div id="tab4" class="tab">
+        <h2>Дополнительная информация</h2>
+        <p>Для получения ключа в ВКонтакте посетите <a href="https://dev.vk.com/ru/api/access-token/getting-started?ref=old_portal" target="_blank">страницу документации ВКонтакте</a>.</p>
+        <p>Для получения c имени номер ID группы ВКонтакте посетите <a href="https://regvk.com/id/" target="_blank">страницу поиска ID</a>.</p>
+        <p>Для получения ключа в Одноклассники посетите <a href="https://apiok.ru/dev/app/create" target="_blank">страницу документации Одноклассники</a>.</p>
+        <p>Для получения ключа в Instagram посетите <a href="https://aspro.ru/docs/course/course36/lesson2307/" target="_blank">страницу документации Instagram</a>.</p>
+        <p>Для получения ключа в Facebook посетите <a href="https://dvmn.org/encyclopedia/api-docs/how-to-get-facebook-api/" target="_blank">страницу документации Facebook</a>.</p>
+        <p>1. Поиск клиентов осуществляется следующим образом:
+            <ul>
+                 <li>Производите настройки, вставляйте токен ключи.</li>
+                 <li>После чего переходите на страницу ленты сообщений.</li>
+                 <li>Находите понравившееся вам объявление (ленту можно отфильтровать по ключевым словам);</li>
+                 <li>Кликнув по тексту объявления или по имени автора, переходите по прямой ссылке и предлагаете автору свои услуги.</li>
+            </ul></p>
+    </div>
+</body>
+</html>

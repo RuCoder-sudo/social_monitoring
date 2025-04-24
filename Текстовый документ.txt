@@ -1,0 +1,712 @@
+Структура скрипта:
+C:\Users\HolliganS\Desktop\project
+_______________
+
+project_folder
+├── Файл - index.html
+├── Папка - css
+│     ├──  Файл - admin.css
+├── Папка - js
+│     ├──  script.js
+├── Папка - php
+│     ├──  Файл - clear_logs.php
+│     ├──  Файл - config.php
+│     ├──  Файл - debug.log
+│     ├──  Файл - logs.txt
+│     ├──  Файл - search.php
+
+Код в файлах:
+_______________
+├── Файл - index.html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск сообщений по ключу в соицальных сетях</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/script.js"></script>
+</head>
+<body>
+    <div class="tab-buttons">
+        <button id="tabButton1" onclick="showTab(1)">Настройки</button>
+        <button id="tabButton2" onclick="showTab(2)">Лента сообщений</button>
+        <button id="tabButton3" onclick="showTab(3)">Логи</button>
+        <button id="tabButton4" onclick="showTab(4)">Дополнительно</button>
+    </div>
+
+    <div id="tab1" class="tab">
+        <h2>Поиск по - "ключевым словам"</h2>
+        <form method="post" action="php/search.php" id="settingsForm">
+            <label for="token">Токен:</label>
+            <input type="text" id="token" name="token" required placeholder="Введите свой сервисный ключ доступа"><br>
+            <label for="social_network">Социальная сеть:</label>
+            <select id="social_network" name="social_network" required>
+                <option value="vk">ВКонтакте</option>
+                <option value="telegram">Телеграм</option>
+                <option value="ok">Однакласники</option>
+                <option value="Instagram">Инстаграмм</option>
+                <option value="Facebook">Facebook</option>
+            </select><br>
+            <label for="group_ids">ID групп (через запятую):</label>
+            <input type="text" id="group_ids" name="group_ids" placeholder="Введите цифровой - ID"><br>
+            
+            <!-- Новый элемент для выбора цвета выделения ключевых слов -->
+            <label for="highlightColor">Цвет выделения ключевых слов:</label>
+            <input type="color" id="highlightColor" name="highlightColor" value="#FFFF00"><br>
+			<label for="time_start">Время начала:</label>
+<input type="datetime-local" id="time_start" name="time_start" required><br>
+<label for="time_end">Время окончания:</label>
+<input type="datetime-local" id="time_end" name="time_end" required><br>
+        </form>
+    </div>
+
+    <div id="tab2" class="tab">
+        <form method="post" id="searchForm">
+            <label for="keywords">Ключевые слова (через запятую):</label>
+            <input type="text" id="keywords" name="keywords" required placeholder="Например: сбербанк, сбер..."><br>
+            <button type="submit">Поиск</button>
+            <button type="button" onclick="stopSearch()">Остановить поиск</button>
+            <button type="button" id="resetButton">Сбросить параметры</button>
+            <button type="button" id="saveButton">Сохранить результаты</button>
+        </form>
+        <div id="resultsCount">Найдено сообщений: 0</div>
+        <div id="loadingIndicator">Поиск идет...</div>
+        <ul id="results"></ul>
+    </div>
+
+    <div id="tab3" class="tab">
+        <ul id="logs"></ul>
+        <button id="clearLogs">Очистить логи</button>
+    </div>
+
+    <div id="tab4" class="tab">
+        <h2>Дополнительная информация</h2>
+        <p>Для получения ключа в ВКонтакте посетите <a href="https://dev.vk.com/ru/api/access-token/getting-started?ref=old_portal" target="_blank">страницу документации ВКонтакте</a>.</p>
+        <p>Для получения c имени номер ID группы ВКонтакте посетите <a href="https://regvk.com/id/" target="_blank">страницу поиска ID</a>.</p>
+        <p>Для получения ключа в Одноклассники посетите <a href="https://apiok.ru/dev/app/create" target="_blank">страницу документации Одноклассники</a>.</p>
+        <p>Для получения ключа в Instagram посетите <a href="https://aspro.ru/docs/course/course36/lesson2307/" target="_blank">страницу документации Instagram</a>.</p>
+        <p>Для получения ключа в Facebook посетите <a href="https://dvmn.org/encyclopedia/api-docs/how-to-get-facebook-api/" target="_blank">страницу документации Facebook</a>.</p>
+        <p>1. Поиск клиентов осуществляется следующим образом:
+            <ul>
+                 <li>Производите настройки, вставляйте токен ключи.</li>
+                 <li>После чего переходите на страницу ленты сообщений.</li>
+                 <li>Находите понравившееся вам объявление (ленту можно отфильтровать по ключевым словам);</li>
+                 <li>Кликнув по тексту объявления или по имени автора, переходите по прямой ссылке и предлагаете автору свои услуги.</li>
+            </ul></p>
+    </div>
+</body>
+</html>
+├── Папка - css
+│     ├──  Файл - admin.css
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e5ebf1;
+    color: #2c2d30;
+    margin: 0;
+    padding: 20px;
+}
+
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+}
+
+.tab-buttons {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab-buttons button {
+    background-color: #2688eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 10px;
+    transition: background-color 0.4s ease;
+}
+
+.tab-buttons button.active {
+    background-color: #3b5a7e;
+}
+
+.tab-buttons button:hover {
+    background-color: #3b5a7e;
+}
+
+form {
+    background-color: #ffffff;
+    border: 1px solid #d3d9de;
+    border-radius: 8px;
+    padding: 20px;
+    width: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+input[type="text"],
+select {
+    width: 60%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #c1c7cd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border: 1px solid #2688eb;
+    box-shadow: 0 0 4px rgba(38, 136, 235, 0.4);
+}
+
+button {
+    background-color: #2688eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.4s ease;
+}
+
+button:hover {
+    background-color: #3b5a7e;
+}
+
+#results {
+    list-style-type: none;
+    padding: 0;
+}
+
+#results li {
+    background-color: #ffffff;
+    border: 1px solid #d3d9de;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#loadingIndicator {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#logs {
+    list-style-type: none;
+    padding: 0;
+}
+
+#logs li {
+    background-color: #ffffff;
+    border: 1px solid #d3d9de;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+├── Папка - js
+│     ├──  script.js
+let page = 1;
+let stop = false;
+let allResults = [];
+
+function showTab(tabIndex) {
+    $('.tab').removeClass('active');
+    $('.tab-buttons button').removeClass('active');
+    $('#tab' + tabIndex).addClass('active');
+    $('#tabButton' + tabIndex).addClass('active');
+}
+
+function logMessage(message) {
+    const timestamp = new Date().toLocaleString();
+    $('#logs').append('<li>' + timestamp + ' - ' + message + '</li>');
+}
+
+function search() {
+    if (stop) return;
+
+    logMessage('СТАРТ поиска');
+    $('#loadingIndicator').show();
+
+    $.ajax({
+        type: 'POST',
+        url: 'php/search.php', 
+        data: {
+            ajax: 1,
+            token: $('#token').val(),
+            keywords: $('#keywords').val(),
+            group_ids: $('#group_ids').val(),
+            social_network: $('#social_network').val(),
+            page: page,
+			time_end: $('input[name="time_end"]').val(),
+			time_start: $('input[name="time_start"]').val()
+        },
+        success: function(data) {
+            try {
+                const results = JSON.parse(data);
+                if (results.error) {
+                    logMessage('Ошибка: ' + results.error);
+                } else if (results.length > 0) {
+                    const keywords = $('#keywords').val().split(',').map(kw => kw.trim());
+                    const highlightColor = $('#highlightColor').val();
+                    results.forEach(result => {
+                        if (!allResults.some(r => r.link === result.link)) {
+                            let highlightedText = result.text;
+                            keywords.forEach(keyword => {
+                                const regex = new RegExp(`(${keyword})`, 'gi');
+                                highlightedText = highlightedText.replace(regex, `<span class="highlight" style="background-color: ${highlightColor};">\$1</span>`);
+                            });
+                            $('#results').append(`
+                                <li>
+                                    <img src="${result.avatar}" alt="Avatar" style="width:50px;height:50px;border-radius:50%;">
+                                    <p><strong>${result.author}</strong></p>
+                                    <p>${highlightedText}</p>
+                                    <p><small>${result.date}</small></p>
+                                    <p><small>От: ${result.from}</small></p>
+                                    <a href="${result.link}" target="_blank">Перейти к сообщению</a>
+                                </li>
+                            `);
+                            allResults.push(result);
+                        }
+                    });
+                    page++;
+                    $('#resultsCount').text('Найдено сообщений: ' + allResults.length);
+                } else {
+                    stop = true;
+                    logMessage('Поиск завершен');
+                }
+            } catch (e) {
+                logMessage('Ошибка при обработке данных: ' + e.message);
+            }
+            $('#loadingIndicator').hide();
+            search();
+        },
+        error: function(xhr, status, error) {
+            $('#loadingIndicator').hide();
+            logMessage('Ошибка при выполнении запроса: ' + status + ' - ' + error);
+            alert('Произошла ошибка при выполнении запроса.');
+        }
+    });
+}
+
+function stopSearch() {
+    stop = true;
+    $('#loadingIndicator').hide();
+    logMessage('Поиск остановлен');
+}
+
+function saveResults() {
+    const filename = 'results.txt';
+    let txtContent = '';
+    allResults.forEach(result => {
+        txtContent += `Текст: ${result.text}\nСсылка: ${result.link}\n\n`;
+    });
+    const blob = new Blob([txtContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function resetForm() {
+    $('#searchForm')[0].reset();
+    $('#results').empty();
+    $('#resultsCount').text('Найдено сообщений: 0');
+    page = 1;
+    stop = true;
+    allResults = [];
+    $('#loadingIndicator').hide();
+    logMessage('Форма сброшена');
+}
+
+$(document).ready(function() {
+    showTab(1);
+
+    $('#searchForm').submit(function(e) {
+        e.preventDefault();
+        $('#results').empty();
+        $('#resultsCount').text('Найдено сообщений: 0');
+        page = 1;
+        stop = false;
+        allResults = [];
+        search();
+    });
+
+    $('#saveButton').click(function() {
+        saveResults();
+    });
+
+    $('#resetButton').click(function() {
+        resetForm();
+    });
+
+    $('#social_network').change(function() {
+        if ($(this).val() === 'telegram') {
+            $('body').addClass('telegram-theme');
+        } else {
+            $('body').removeClass('telegram-theme');
+        }
+    });
+
+    // Добавляем выбор цвета выделения ключевых слов
+    $('#highlightColor').change(function() {
+        const color = $(this).val();
+        $('.highlight').css('background-color', color);
+    });
+
+    // Добавляем обработчик для кнопки "Очистить логи"
+    $('#clearLogs').click(function() {
+        console.log('Очистка логов начата'); // Добавлено логирование
+        fetch('php/clear_logs.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'ajax=true&clear_logs=true'
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Ответ сервера:', data); // Добавлено логирование
+            if (data.status === 'logs_cleared') {
+                alert('Логи успешно очищены');
+                $('#logs').empty(); // Очистка списка логов на странице
+            } else {
+                alert('Ошибка: ' + data.status);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при очистке логов:', error);
+        });
+    });
+});
+
+├── Папка - php
+│     ├──  Файл - clear_logs.php
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
+    if (isset($_POST['clear_logs']) && $_POST['clear_logs'] === 'true') {
+        $logFile = 'logs.txt'; // Исправленный путь к файлу логов
+        if (file_exists($logFile)) {
+            file_put_contents($logFile, '');
+            echo json_encode(['status' => 'logs_cleared']);
+        } else {
+            echo json_encode(['status' => 'log_file_not_found']);
+        }
+    } else {
+        echo json_encode(['status' => 'invalid_request']);
+    }
+} else {
+    echo json_encode(['status' => 'invalid_request']);
+}
+?>
+│     ├──  Файл - config.php
+<?php
+// Конфигурационный файл
+$api_url = 'https://api.example.com/search';
+?>
+
+│     ├──  Файл - debug.log
+│     ├──  Файл - logs.txt
+│     ├──  Файл - search.php
+<?php
+
+$existingLinks = [];
+$newResults = [];
+$foundDuplicate = false;
+$stringArray6 = ["1721088000", "1721347200", "1720656000", "1721088000"];
+
+function vkApiRequest($method, $params) {
+    $url = 'https://api.vk.com/method/' . $method . '?' . http_build_query($params);
+    $response = file_get_contents($url);
+    
+    return json_decode($response, true);
+}
+
+function telegramApiRequest($method, $params) {
+    $url = 'https://api.telegram.org/bot' . $params['token'] . '/' . $method;
+    $response = file_get_contents($url . '?' . http_build_query($params));
+    
+    return json_decode($response, true);
+}
+
+function getChatId($token, $username) {
+    $url = "https://api.telegram.org/bot$token/getChat";
+    $params = [
+        'chat_id' => $username
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+
+    if ($data['ok']) {
+        return $data['result']['id'];
+    } else {
+        return null;
+    }
+}
+
+function getVkGroupInfo($groupId, $token) {
+    $params = [
+        'access_token' => $token,
+        'v' => '5.131',
+        'group_id' => $groupId,
+        'fields' => 'name,photo_50'
+    ];
+    $response = vkApiRequest('groups.getById', $params);
+    return $response['response'][0] ?? null;
+}
+
+function getVkUserInfo($userId, $token) {
+    $params = [
+        'access_token' => $token,
+        'v' => '5.131',
+        'user_ids' => $userId,
+        'fields' => 'photo_50'
+    ];
+    $response = vkApiRequest('users.get', $params);
+    return $response['response'][0] ?? null;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
+    $token = $_POST['token'];
+    $keywords = explode(',', $_POST['keywords']);
+    $groupIds = array_filter(explode(',', $_POST['group_ids']));
+    $socialNetwork = $_POST['social_network'];
+    $results = [];
+    $count = 100;
+    $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
+    $offset = ($page - 1) * $count;
+
+    if (isset($_POST['time_start']) && isset($_POST['time_end'])) {
+        $originalDate = $_POST['time_end'];
+        file_put_contents('debug.log', $originalDate . PHP_EOL, FILE_APPEND);
+        $start_time = strtotime($_POST['time_start']);
+        $end_time = strtotime($_POST['time_end']);
+    } else {
+        $start_time = strtotime('now');
+        $end_time = strtotime('now');
+    }
+    file_put_contents('debug.log', $end_time . PHP_EOL, FILE_APPEND);
+
+    $current_start_time = $start_time - 86400;
+    $one_day_seconds = 86400;
+
+    while ($current_start_time < $end_time) {
+        $current_end_time = min($current_start_time + $one_day_seconds - 1, $end_time);
+
+        if ($socialNetwork == 'vk') {
+            if (empty($groupIds)) {
+                foreach ($keywords as $keyword) {
+                    $params = [
+                        'access_token' => $token,
+                        'v' => '5.199',
+                        'q' => $keyword,
+                        'count' => $count,
+                        'offset' => $offset,
+                        'end_time' => $current_end_time
+                    ];
+
+                    $response = vkApiRequest('newsfeed.search', $params);
+
+                    if (isset($response['response']['items'])) {
+                        foreach ($response['response']['items'] as $item) {
+                            $containsAllKeywords = true;
+                            foreach ($keywords as $kw) {
+                                if (!preg_match('/\b' . preg_quote($kw, '/') . '\b/ui', $item['text'])) {
+                                    $containsAllKeywords = false;
+                                    break;
+                                }
+                            }
+                            if ($containsAllKeywords) {
+                                $link = 'https://vk.com/feed?w=wall' . $item['owner_id'] . '_' . $item['id'];
+                                if (!in_array($link, $existingLinks)) {
+                                    $highlightedText = $item['text'];
+                                    foreach ($keywords as $kw) {
+                                        $highlightedText = preg_replace('/\b(' . preg_quote($kw, '/') . ')\b/ui', '<mark>$1</mark>', $highlightedText);
+                                    }
+
+                                    $author = 'Пользователь';
+                                    $avatar = 'https://vk.com/images/camera_50.png';
+                                    if ($item['owner_id'] < 0) {
+                                        $groupInfo = getVkGroupInfo(abs($item['owner_id']), $token);
+                                        if ($groupInfo) {
+                                            $author = $groupInfo['name'];
+                                            $avatar = $groupInfo['photo_50'];
+                                        } else {
+                                            $author = 'Группа';
+                                            $avatar = 'https://vk.com/images/community_50.png';
+                                        }
+                                    } else {
+                                        $userInfo = getVkUserInfo($item['owner_id'], $token);
+                                        if ($userInfo) {
+                                            $author = $userInfo['first_name'] . ' ' . $userInfo['last_name'];
+                                            $avatar = $userInfo['photo_50'];
+                                        }
+                                    }
+
+                                    $newResults[] = [
+                                        'text' => $highlightedText,
+                                        'link' => $link,
+                                        'avatar' => $avatar,
+                                        'author' => $author,
+                                        'date' => date('d.m.Y H:i', $item['date']),
+                                        'from' => $item['from_id'] > 0 ? 'Пользователь' : 'Группа'
+                                    ];
+                                    $existingLinks[] = $link;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                foreach ($groupIds as $groupId) {
+                    $params = [
+                        'access_token' => $token,
+                        'v' => '5.131',
+                        'owner_id' => '-' . $groupId,
+                        'count' => $count,
+                        'offset' => $offset
+                    ];
+                    $response = vkApiRequest('wall.get', $params);
+
+                    if (isset($response['response']['items'])) {
+                        foreach ($response['response']['items'] as $item) {
+                            $containsAllKeywords = true;
+                            foreach ($keywords as $kw) {
+                                if (!preg_match('/\b' . preg_quote($kw, '/') . '\b/ui', $item['text'])) {
+                                    $containsAllKeywords = false;
+                                    break;
+                                }
+                            }
+                            if ($containsAllKeywords) {
+                                $link = 'https://vk.com/wall' . $item['owner_id'] . '_' . $item['id'];
+                                if (!in_array($link, $existingLinks)) {
+                                    $highlightedText = $item['text'];
+                                    foreach ($keywords as $kw) {
+                                        $highlightedText = preg_replace('/\b(' . preg_quote($kw, '/') . ')\b/ui', '<mark>$1</mark>', $highlightedText);
+                                    }
+
+                                    $author = 'Пользователь';
+                                    $avatar = 'https://vk.com/images/camera_50.png';
+                                    if ($item['owner_id'] < 0) {
+                                        $groupInfo = getVkGroupInfo(abs($item['owner_id']), $token);
+                                        if ($groupInfo) {
+                                            $author = $groupInfo['name'];
+                                            $avatar = $groupInfo['photo_50'];
+                                        } else {
+                                            $author = 'Группа';
+                                            $avatar = 'https://vk.com/images/community_50.png';
+                                        }
+                                    } else {
+                                        $userInfo = getVkUserInfo($item['owner_id'], $token);
+                                        if ($userInfo) {
+                                            $author = $userInfo['first_name'] . ' ' . $userInfo['last_name'];
+                                            $avatar = $userInfo['photo_50'];
+                                        }
+                                    }
+
+                                    $newResults[] = [
+                                        'text' => $highlightedText,
+                                        'link' => $link,
+                                        'avatar' => $avatar,
+                                        'author' => $author,
+                                        'date' => date('d.m.Y H:i', $item['date']),
+                                        'from' => $item['from_id'] > 0 ? 'Пользователь' : 'Группа'
+                                    ];
+                                    $existingLinks[] = $link;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } elseif ($socialNetwork == 'telegram') {
+            foreach ($groupIds as $groupId) {
+                if (strpos($groupId, '@') === 0) {
+                    $groupide = $groupId;
+                    $groupId = getChatId($token, $groupId);
+                }
+
+                $url = 'https://api.telegram.org/bot' . $token . '/getUpdates';
+                $response = file_get_contents($url);
+                $updates = json_decode($response, true);
+
+                if ($updates['ok']) {
+                    foreach ($updates['result'] as $update) {
+                        if (isset($update['message']) && $update['message']['chat']['id'] == $groupId) {
+                            if (isset($update['message']['text'])) {
+                                $containsAllKeywords = true;
+                                foreach ($keywords as $kw) {
+                                    if (!preg_match('/\b' . preg_quote($kw, '/') . '\b/ui', $update['message']['text'])) {
+                                        $containsAllKeywords = false;
+                                        break;
+                                    }
+                                }
+                                if ($containsAllKeywords) {
+                                    $groupide = str_replace("@", "", $groupide);
+                                    $link = 'https://t.me/' . $groupide . '/' . $update['message']['message_id'];
+                                    if (!in_array($link, $existingLinks)) {
+                                        $highlightedText = $update['message']['text'];
+                                        foreach ($keywords as $kw) {
+                                            $highlightedText = preg_replace('/\b(' . preg_quote($kw, '/') . ')\b/ui', '<mark>$1</mark>', $highlightedText);
+                                        }
+                                        $newResults[] = [
+                                            'text' => $highlightedText,
+                                            'link' => $link,
+                                            'avatar' => 'https://telegram.org/img/t_logo.png', // Пример аватарки
+                                            'author' => $update['message']['chat']['title'], // Название группы или автора
+                                            'date' => date('d.m.Y H:i', $update['message']['date']), // Дата поста
+                                            'from' => $update['message']['from']['username'] // От кого
+                                        ];
+                                        $existingLinks[] = $link;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        $current_start_time = $current_end_time + 1;
+    }
+
+    echo json_encode($newResults);
+    exit;
+}
+?>
+
+--------------------
+ Давайте сделаем акцент только на доработке функционала для Одноклассников,
